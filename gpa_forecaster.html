@@ -1,0 +1,1848 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="telemetry">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Academic GPA &amp; Semester Grade Forecaster</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    /* ==========================================================================
+       CSS CUSTOM PROPERTIES & 3-WAY THEME ARCHITECTURE
+       ========================================================================== */
+    :root,
+    [data-theme="telemetry"] {
+      --bg-canvas: #090d16;
+      --bg-surface: #111827;
+      --bg-surface-alt: #0b111e;
+      --bg-surface-hover: #182236;
+      --border-subtle: #1f2a40;
+      --border-strong: #334155;
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --accent-primary: #38bdf8;
+      --accent-primary-soft: rgba(56, 189, 248, 0.14);
+      --accent-secondary: #818cf8;
+      --accent-secondary-soft: rgba(129, 140, 248, 0.15);
+      --status-success: #10b981;
+      --status-success-soft: rgba(16, 185, 129, 0.15);
+      --status-warning: #f59e0b;
+      --status-warning-soft: rgba(245, 158, 11, 0.16);
+      --status-danger: #f43f5e;
+      --status-danger-soft: rgba(244, 63, 94, 0.16);
+      --hero-glow: radial-gradient(circle at 15% 45%, rgba(56, 189, 248, 0.16) 0%, rgba(17, 24, 39, 0.96) 58%, #111827 100%);
+      --hero-glow-success: radial-gradient(circle at 15% 45%, rgba(16, 185, 129, 0.18) 0%, rgba(17, 24, 39, 0.96) 58%, #111827 100%);
+      --hero-glow-warn: radial-gradient(circle at 15% 45%, rgba(245, 158, 11, 0.17) 0%, rgba(17, 24, 39, 0.96) 58%, #111827 100%);
+      --shadow-card: 0 12px 32px -8px rgba(0, 0, 0, 0.48);
+      --slider-track: #1e293b;
+      --thumb-ring: #090d16;
+    }
+
+    [data-theme="crimson"] {
+      --bg-canvas: #14090c;
+      --bg-surface: #211015;
+      --bg-surface-alt: #180b0f;
+      --bg-surface-hover: #2b151c;
+      --border-subtle: #3d1d26;
+      --border-strong: #5c2b38;
+      --text-primary: #fdf8f6;
+      --text-secondary: #d6bfc4;
+      --text-muted: #9e7d85;
+      --accent-primary: #eab308;
+      --accent-primary-soft: rgba(234, 179, 8, 0.16);
+      --accent-secondary: #f43f5e;
+      --accent-secondary-soft: rgba(244, 63, 94, 0.18);
+      --status-success: #22c55e;
+      --status-success-soft: rgba(34, 197, 94, 0.16);
+      --status-warning: #f59e0b;
+      --status-warning-soft: rgba(245, 158, 11, 0.18);
+      --status-danger: #fb7185;
+      --status-danger-soft: rgba(251, 113, 133, 0.18);
+      --hero-glow: radial-gradient(circle at 15% 45%, rgba(225, 29, 72, 0.22) 0%, rgba(33, 16, 21, 0.96) 58%, #211015 100%);
+      --hero-glow-success: radial-gradient(circle at 15% 45%, rgba(234, 179, 8, 0.22) 0%, rgba(33, 16, 21, 0.96) 58%, #211015 100%);
+      --hero-glow-warn: radial-gradient(circle at 15% 45%, rgba(225, 29, 72, 0.24) 0%, rgba(33, 16, 21, 0.96) 58%, #211015 100%);
+      --shadow-card: 0 12px 32px -8px rgba(10, 2, 4, 0.65);
+      --slider-track: #3d1d26;
+      --thumb-ring: #14090c;
+    }
+
+    [data-theme="light"] {
+      --bg-canvas: #f4f6f9;
+      --bg-surface: #ffffff;
+      --bg-surface-alt: #f8fafc;
+      --bg-surface-hover: #f1f5f9;
+      --border-subtle: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+      --accent-primary: #2563eb;
+      --accent-primary-soft: rgba(37, 99, 235, 0.1);
+      --accent-secondary: #4f46e5;
+      --accent-secondary-soft: rgba(79, 70, 229, 0.1);
+      --status-success: #059669;
+      --status-success-soft: rgba(5, 150, 105, 0.12);
+      --status-warning: #d97706;
+      --status-warning-soft: rgba(217, 119, 6, 0.12);
+      --status-danger: #e11d48;
+      --status-danger-soft: rgba(225, 29, 72, 0.12);
+      --hero-glow: radial-gradient(circle at 15% 45%, rgba(37, 99, 235, 0.08) 0%, rgba(255, 255, 255, 0.98) 60%, #ffffff 100%);
+      --hero-glow-success: radial-gradient(circle at 15% 45%, rgba(5, 150, 105, 0.09) 0%, rgba(255, 255, 255, 0.98) 60%, #ffffff 100%);
+      --hero-glow-warn: radial-gradient(circle at 15% 45%, rgba(217, 119, 6, 0.09) 0%, rgba(255, 255, 255, 0.98) 60%, #ffffff 100%);
+      --shadow-card: 0 8px 24px -6px rgba(15, 23, 42, 0.07);
+      --slider-track: #cbd5e1;
+      --thumb-ring: #ffffff;
+    }
+
+    /* ==========================================================================
+       RESET & BASE LAYOUT
+       ========================================================================== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg-canvas);
+      color: var(--text-primary);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      min-height: 100vh;
+    }
+
+    .mono {
+      font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 1.25rem 1rem 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    @media (min-width: 768px) {
+      .container {
+        padding: 1.75rem 1.75rem 3rem;
+        gap: 1.5rem;
+      }
+    }
+
+    /* ==========================================================================
+       HEADER & 3-WAY THEME SWITCHER
+       ========================================================================== */
+    .app-header {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    @media (min-width: 1024px) {
+      .app-header {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+    }
+
+    .header-title-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .header-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent-primary);
+    }
+
+    .pulse-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background-color: var(--accent-primary);
+      box-shadow: 0 0 8px var(--accent-primary);
+    }
+
+    .header-title {
+      font-size: clamp(1.45rem, 2.6vw, 2rem);
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      color: var(--text-primary);
+      line-height: 1.15;
+    }
+
+    .header-subtitle {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+    }
+
+    .header-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    /* 3-Way Segmented Theme Switcher */
+    .theme-switcher {
+      display: inline-flex;
+      flex-wrap: wrap;
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 3px;
+      gap: 3px;
+    }
+
+    .theme-btn {
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: inherit;
+      font-size: 0.74rem;
+      font-weight: 600;
+      padding: 0.42rem 0.7rem;
+      border-radius: 9px;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .theme-btn:hover {
+      color: var(--text-primary);
+      background-color: var(--bg-surface-hover);
+    }
+
+    .theme-btn.active {
+      background-color: var(--accent-primary);
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    [data-theme="crimson"] .theme-btn.active,
+    [data-theme="telemetry"] .theme-btn.active {
+      color: #090d16;
+      font-weight: 700;
+    }
+
+    .theme-swatch {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .btn-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.5rem 0.85rem;
+      border-radius: 11px;
+      font-family: inherit;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--border-subtle);
+      background-color: var(--bg-surface);
+      color: var(--text-primary);
+      transition: all 0.16s ease;
+    }
+
+    .btn-action:hover {
+      background-color: var(--bg-surface-hover);
+      border-color: var(--border-strong);
+      transform: translateY(-1px);
+    }
+
+    .btn-action:active {
+      transform: translateY(0);
+    }
+
+    .btn-preset {
+      background-color: var(--accent-secondary-soft);
+      border-color: var(--accent-secondary);
+      color: var(--text-primary);
+    }
+
+    .btn-preset:hover {
+      filter: brightness(1.1);
+    }
+
+    /* ==========================================================================
+       HERO TELEMETRY PANEL & 4 LIVE KPI CARDS
+       ========================================================================== */
+    .hero-panel {
+      background: var(--hero-glow);
+      border: 1px solid var(--border-subtle);
+      border-radius: 18px;
+      padding: 1.35rem;
+      box-shadow: var(--shadow-card);
+      transition: background 0.3s ease, border-color 0.25s ease;
+    }
+
+    @media (min-width: 768px) {
+      .hero-panel {
+        padding: 1.75rem;
+      }
+    }
+
+    .hero-panel.state-success {
+      background: var(--hero-glow-success);
+    }
+
+    .hero-panel.state-warn {
+      background: var(--hero-glow-warn);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    @media (min-width: 1024px) {
+      .hero-grid {
+        grid-template-columns: 5fr 7fr;
+      }
+    }
+
+    .hero-primary {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .hero-badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .hero-label {
+      font-size: 0.74rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: var(--text-secondary);
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.22rem 0.65rem;
+      border-radius: 999px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      border: 1px solid transparent;
+    }
+
+    .status-badge.eligible {
+      background-color: var(--status-success-soft);
+      color: var(--status-success);
+      border-color: var(--status-success);
+    }
+
+    .status-badge.below {
+      background-color: var(--status-warning-soft);
+      color: var(--status-warning);
+      border-color: var(--status-warning);
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: currentColor;
+    }
+
+    .hero-gpa-row {
+      display: flex;
+      align-items: baseline;
+      gap: 0.55rem;
+    }
+
+    .hero-gpa-value {
+      font-size: clamp(2.85rem, 5vw, 3.85rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      color: var(--text-primary);
+    }
+
+    .hero-gpa-scale {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .hero-submetrics {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem 0.85rem;
+      font-size: 0.84rem;
+      padding-top: 0.25rem;
+    }
+
+    .delta-pill {
+      font-weight: 700;
+    }
+
+    .delta-positive {
+      color: var(--status-success);
+    }
+
+    .delta-negative {
+      color: var(--status-danger);
+    }
+
+    .buffer-text {
+      color: var(--text-secondary);
+    }
+
+    .buffer-highlight-ok {
+      color: var(--status-success);
+      font-weight: 700;
+    }
+
+    .buffer-highlight-gap {
+      color: var(--status-warning);
+      font-weight: 700;
+    }
+
+    /* 4 Live KPI Cards */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+    }
+
+    @media (min-width: 640px) {
+      .kpi-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.85rem;
+      }
+    }
+
+    .kpi-card {
+      background-color: var(--bg-surface-alt);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 0.9rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
+    .kpi-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .kpi-value {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      line-height: 1.15;
+    }
+
+    .kpi-value.standing-text {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--accent-primary);
+      line-height: 1.25;
+    }
+
+    .kpi-sub {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 0.15rem;
+    }
+
+    /* ==========================================================================
+       MAIN WORKSPACE GRID
+       ========================================================================== */
+    .workspace-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+      align-items: start;
+    }
+
+    @media (min-width: 1024px) {
+      .workspace-grid {
+        grid-template-columns: 5fr 7fr;
+        gap: 1.5rem;
+      }
+    }
+
+    .column-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .panel-card {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 1.25rem;
+      box-shadow: var(--shadow-card);
+    }
+
+    .panel-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .panel-title {
+      font-size: 0.85rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-primary);
+    }
+
+    .panel-subtitle {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      margin-top: 0.15rem;
+    }
+
+    .panel-tag {
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.2rem 0.55rem;
+      border-radius: 8px;
+      background-color: var(--bg-surface-alt);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+    }
+
+    /* ==========================================================================
+       SLIDERS & TOGGLES
+       ========================================================================== */
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 1.15rem;
+    }
+
+    .slider-block {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .slider-label-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.84rem;
+    }
+
+    .slider-label {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .slider-readout {
+      font-weight: 700;
+      font-size: 0.82rem;
+      padding: 0.18rem 0.55rem;
+      border-radius: 8px;
+      background-color: var(--bg-surface-alt);
+      border: 1px solid var(--border-subtle);
+      color: var(--accent-primary);
+    }
+
+    input[type="range"].app-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--slider-track);
+      outline: none;
+      cursor: pointer;
+    }
+
+    input[type="range"].app-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--accent-primary);
+      border: 2px solid var(--thumb-ring);
+      box-shadow: 0 0 0 2px var(--accent-primary-soft);
+      cursor: pointer;
+      transition: transform 0.12s ease;
+    }
+
+    input[type="range"].app-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.14);
+    }
+
+    input[type="range"].app-slider::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--accent-primary);
+      border: 2px solid var(--thumb-ring);
+      cursor: pointer;
+    }
+
+    .slider-ticks {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.68rem;
+      color: var(--text-muted);
+    }
+
+    /* Toggle Switch Rows */
+    .toggle-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding: 0.75rem 0.85rem;
+      border-radius: 12px;
+      background-color: var(--bg-surface-alt);
+      border: 1px solid var(--border-subtle);
+      cursor: pointer;
+      transition: border-color 0.16s ease;
+    }
+
+    .toggle-row:hover {
+      border-color: var(--border-strong);
+    }
+
+    .toggle-info-title {
+      font-size: 0.83rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .toggle-info-desc {
+      font-size: 0.73rem;
+      color: var(--text-secondary);
+      margin-top: 0.12rem;
+    }
+
+    .boost-chip {
+      font-size: 0.66rem;
+      font-weight: 700;
+      padding: 0.1rem 0.4rem;
+      border-radius: 6px;
+      background-color: var(--status-success-soft);
+      color: var(--status-success);
+    }
+
+    /* Pure CSS Switch */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 42px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+
+    .switch.sm {
+      width: 36px;
+      height: 20px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .switch-track {
+      position: absolute;
+      inset: 0;
+      background-color: var(--slider-track);
+      border-radius: 999px;
+      transition: background-color 0.2s ease;
+    }
+
+    .switch-track::before {
+      content: "";
+      position: absolute;
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: #ffffff;
+      border-radius: 50%;
+      transition: transform 0.2s ease;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    }
+
+    .switch.sm .switch-track::before {
+      height: 14px;
+      width: 14px;
+      left: 3px;
+      bottom: 3px;
+    }
+
+    .switch input:checked + .switch-track {
+      background-color: var(--accent-primary);
+    }
+
+    .switch input:checked + .switch-track::before {
+      transform: translateX(18px);
+    }
+
+    .switch.sm input:checked + .switch-track::before {
+      transform: translateX(16px);
+    }
+
+    /* ==========================================================================
+       DYNAMIC COURSEWORK GRID & CARDS
+       ========================================================================== */
+    .courses-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.9rem;
+    }
+
+    @media (min-width: 640px) {
+      .courses-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .course-card {
+      background-color: var(--bg-surface-alt);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 0.95rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 0.75rem;
+      transition: border-color 0.16s ease;
+    }
+
+    .course-card:hover {
+      border-color: var(--border-strong);
+    }
+
+    .course-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
+    .course-name {
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.3;
+    }
+
+    .course-meta-row {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      margin-top: 0.3rem;
+    }
+
+    .credit-select {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.18rem 0.4rem;
+      border-radius: 7px;
+      background-color: var(--bg-surface);
+      color: var(--text-primary);
+      border: 1px solid var(--border-subtle);
+      cursor: pointer;
+    }
+
+    .grade-pill {
+      font-size: 0.76rem;
+      font-weight: 800;
+      padding: 0.24rem 0.55rem;
+      border-radius: 8px;
+      background-color: var(--accent-primary-soft);
+      color: var(--accent-primary);
+      border: 1px solid var(--accent-primary);
+      white-space: nowrap;
+      text-align: right;
+    }
+
+    .grade-pill.pf-mode {
+      background-color: var(--bg-surface);
+      color: var(--text-secondary);
+      border-color: var(--border-strong);
+    }
+
+    .grade-pill.low-grade {
+      background-color: var(--status-danger-soft);
+      color: var(--status-danger);
+      border-color: var(--status-danger);
+    }
+
+    .course-toggles {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+      padding-top: 0.6rem;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .mini-toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.74rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+
+    .btn-add-course {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.38rem 0.75rem;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 0.76rem;
+      font-weight: 700;
+      cursor: pointer;
+      background-color: var(--accent-primary-soft);
+      color: var(--accent-primary);
+      border: 1px solid var(--accent-primary);
+      transition: all 0.15s ease;
+    }
+
+    .btn-add-course:hover {
+      filter: brightness(1.1);
+    }
+
+    .btn-add-course.remove-mode {
+      background-color: var(--status-danger-soft);
+      color: var(--status-danger);
+      border-color: var(--status-danger);
+    }
+
+    /* ==========================================================================
+       SVG VISUALIZATION CONTAINERS & LEGEND
+       ========================================================================== */
+    .svg-wrapper {
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .svg-wrapper svg {
+      width: 100%;
+      height: auto;
+      display: block;
+      user-select: none;
+    }
+
+    .chart-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      font-size: 0.71rem;
+      color: var(--text-secondary);
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .legend-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 3px;
+    }
+
+    /* ==========================================================================
+       SUBMISSION FOOTNOTE
+       ========================================================================== */
+    .submission-footer {
+      margin-top: 0.5rem;
+      padding: 0.9rem 1.1rem;
+      border-radius: 12px;
+      background-color: var(--bg-surface);
+      border: 1px dashed var(--border-strong);
+      text-align: center;
+      font-size: 0.76rem;
+      color: var(--text-secondary);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- ======================================================================
+         1. HEADER WITH 3-WAY THEME SWITCHER & PRESET ACTIONS
+         ====================================================================== -->
+    <header class="app-header">
+      <div class="header-title-group">
+        <div class="header-eyebrow">
+          <span class="pulse-dot"></span>
+          <span>Interactive Academic Decision Simulator</span>
+        </div>
+        <h1 class="header-title">Academic GPA &amp; Semester Grade Forecaster</h1>
+        <p class="header-subtitle">
+          Model course grade tradeoffs, Honors/Lab weighting, and Pass/Fail elections in real time before locking your semester plan.
+        </p>
+      </div>
+
+      <div class="header-actions">
+        <!-- 3-Way Theme Switcher -->
+        <div class="theme-switcher" role="group" aria-label="Color Theme Switcher">
+          <button type="button" class="theme-btn" data-set-theme="crimson">
+            <span class="theme-swatch" style="background: linear-gradient(135deg, #e11d48, #eab308);"></span>
+            University Crimson &amp; Gold
+          </button>
+          <button type="button" class="theme-btn" data-set-theme="light">
+            <span class="theme-swatch" style="background: #2563eb; border: 1px solid #cbd5e1;"></span>
+            Clean Academic Light
+          </button>
+          <button type="button" class="theme-btn active" data-set-theme="telemetry">
+            <span class="theme-swatch" style="background: #38bdf8;"></span>
+            Midnight Telemetry
+          </button>
+        </div>
+
+        <button type="button" id="tradeoffPresetBtn" class="btn-action btn-preset" title="Test how shifting HIST 110 to Pass/Fail and boosting PHYS 201 impacts Dean's List eligibility">
+          Test Tradeoff Scenario
+        </button>
+
+        <button type="button" id="resetDataBtn" class="btn-action">
+          Reset Sample Data
+        </button>
+      </div>
+    </header>
+
+    <!-- ======================================================================
+         2. HERO TELEMETRY PANEL & 3. FOUR LIVE KPI CARDS
+         ====================================================================== -->
+    <section id="heroPanel" class="hero-panel state-success" aria-live="polite">
+      <div class="hero-grid">
+        <!-- Primary Readout -->
+        <div class="hero-primary">
+          <div class="hero-badge-row">
+            <span class="hero-label">Projected Cumulative GPA</span>
+            <span id="targetStatusBadge" class="status-badge eligible">
+              <span class="status-dot"></span>
+              Dean's List Eligible &ge; 3.50
+            </span>
+          </div>
+
+          <div class="hero-gpa-row">
+            <div id="projectedGpaValue" class="hero-gpa-value mono">3.50</div>
+            <div class="hero-gpa-scale mono">/ <span id="maxScaleDisplay">4.00</span> scale</div>
+          </div>
+
+          <div class="hero-submetrics">
+            <span id="netGpaChangeText" class="delta-pill delta-positive mono">+0.08 GPA net change</span>
+            <span style="color: var(--text-muted);">&bull;</span>
+            <span id="bufferGapText" class="buffer-text">
+              Target Goal <strong class="mono">3.50</strong>: <span class="buffer-highlight-ok mono">+0.12 quality pts buffer</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- 4 Live KPI Cards -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-top">
+              <span>Semester GPA</span>
+              <span style="color: var(--accent-primary); font-weight: 700;">TERM</span>
+            </div>
+            <div>
+              <div id="kpiSemesterGpa" class="kpi-value mono">3.78</div>
+              <div id="kpiSemesterSub" class="kpi-sub mono">13 graded credits</div>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-top">
+              <span>Total Credits</span>
+              <span style="color: var(--accent-secondary); font-weight: 700;">EARNED</span>
+            </div>
+            <div>
+              <div id="kpiTotalCredits" class="kpi-value mono">58</div>
+              <div id="kpiCreditsSub" class="kpi-sub mono">45 prior + 13 current</div>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-top">
+              <span>Quality Points</span>
+              <span style="color: var(--status-success); font-weight: 700;">CUMUL.</span>
+            </div>
+            <div>
+              <div id="kpiQualityPoints" class="kpi-value mono">203.05</div>
+              <div id="kpiPointsSub" class="kpi-sub mono">+49.15 earned this term</div>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-top">
+              <span>Academic Standing</span>
+              <span style="color: var(--status-warning); font-weight: 700;">TIER</span>
+            </div>
+            <div>
+              <div id="kpiStandingTier" class="kpi-value standing-text">Cum Laude Honors Track</div>
+              <div id="kpiStandingSub" class="kpi-sub">3.50 &ndash; 3.69 cumulative band</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         4. INTERACTIVE CONTROLS PANEL & 5. REAL-TIME SVG VISUALIZATIONS
+         ====================================================================== -->
+    <main class="workspace-grid">
+      <!-- Left Column: Baseline Sliders, Global Toggles, Trajectory Chart -->
+      <div class="column-stack">
+
+        <!-- Baseline & Goal Sliders -->
+        <section class="panel-card">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">Baseline &amp; Target Parameters</h2>
+              <p class="panel-subtitle">Adjust prior academic history and cumulative GPA target</p>
+            </div>
+            <span class="panel-tag mono">Prior Record</span>
+          </div>
+
+          <div class="control-group">
+            <!-- Prior Cumulative GPA -->
+            <div class="slider-block">
+              <div class="slider-label-row">
+                <label for="priorGpaSlider" class="slider-label">Prior Cumulative GPA</label>
+                <span id="priorGpaReadout" class="slider-readout mono">3.42</span>
+              </div>
+              <input id="priorGpaSlider" class="app-slider" type="range" min="2.00" max="4.00" step="0.01" value="3.42" />
+              <div class="slider-ticks mono">
+                <span>2.00</span>
+                <span>3.00</span>
+                <span>4.00</span>
+              </div>
+            </div>
+
+            <!-- Completed Credits -->
+            <div class="slider-block">
+              <div class="slider-label-row">
+                <label for="completedCreditsSlider" class="slider-label">Completed Credits</label>
+                <span id="completedCreditsReadout" class="slider-readout mono">45 cr</span>
+              </div>
+              <input id="completedCreditsSlider" class="app-slider" type="range" min="0" max="120" step="1" value="45" />
+              <div class="slider-ticks mono">
+                <span>0 cr (First-Year)</span>
+                <span>60 cr (Junior)</span>
+                <span>120 cr</span>
+              </div>
+            </div>
+
+            <!-- Target Cumulative GPA Goal -->
+            <div class="slider-block">
+              <div class="slider-label-row">
+                <label for="targetGpaSlider" class="slider-label">Target Cumulative GPA Goal</label>
+                <span id="targetGpaReadout" class="slider-readout mono">3.50</span>
+              </div>
+              <input id="targetGpaSlider" class="app-slider" type="range" min="2.50" max="4.00" step="0.05" value="3.50" />
+              <div class="slider-ticks mono">
+                <span>2.50</span>
+                <span>3.50 (Dean's List)</span>
+                <span>4.00</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Global Toggles -->
+        <section class="panel-card">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">Global Policy &amp; What-If Toggles</h2>
+              <p class="panel-subtitle">Test institutional grading caps or across-the-board exam gains</p>
+            </div>
+            <span class="panel-tag mono">Scenario Rules</span>
+          </div>
+
+          <div class="toggle-list">
+            <label class="toggle-row" for="strictCapToggle">
+              <div>
+                <div class="toggle-info-title">Strict 4.00 Scale Cap</div>
+                <div class="toggle-info-desc">Caps Honors/Lab boost at 4.00 (uncheck to allow up to 4.25)</div>
+              </div>
+              <span class="switch">
+                <input id="strictCapToggle" type="checkbox" checked />
+                <span class="switch-track"></span>
+              </span>
+            </label>
+
+            <label class="toggle-row" for="aceFinalsToggle">
+              <div>
+                <div class="toggle-info-title">
+                  <span>What-If: Ace All Finals</span>
+                  <span class="boost-chip mono">+0.33 boost</span>
+                </div>
+                <div class="toggle-info-desc">Adds +0.33 grade points across all non-failing courses</div>
+              </div>
+              <span class="switch">
+                <input id="aceFinalsToggle" type="checkbox" />
+                <span class="switch-track"></span>
+              </span>
+            </label>
+          </div>
+        </section>
+
+        <!-- SVG Visualization 1: Cumulative GPA Trajectory & Benchmark Bar -->
+        <section class="panel-card">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">Cumulative GPA Trajectory &amp; Benchmark</h2>
+              <p class="panel-subtitle">Prior baseline vs. Projected GPA vs. Target Goal (2.00&ndash;4.00 scale)</p>
+            </div>
+            <span id="trajectoryDeltaBadge" class="panel-tag mono">+0.08</span>
+          </div>
+
+          <div class="svg-wrapper">
+            <svg id="trajectorySvg" viewBox="0 0 460 175" role="img" aria-label="Cumulative GPA Trajectory and Benchmark Bar Chart"></svg>
+          </div>
+        </section>
+      </div>
+
+      <!-- Right Column: Dynamic Coursework List & Diverging Credit Impact Chart -->
+      <div class="column-stack">
+
+        <!-- Dynamic Coursework List -->
+        <section class="panel-card">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">Current Semester Coursework</h2>
+              <p class="panel-subtitle">Slide expected letter grades, adjust credits (1&ndash;5), or toggle Honors/Lab &amp; Pass/Fail</p>
+            </div>
+            <button type="button" id="toggleFifthCourseBtn" class="btn-add-course">
+              + Add 5th Course
+            </button>
+          </div>
+
+          <div id="coursesGrid" class="courses-grid">
+            <!-- Dynamically populated by JS -->
+          </div>
+        </section>
+
+        <!-- SVG Visualization 2: Diverging Credit Impact & GPA Leverage Chart -->
+        <section class="panel-card">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">Diverging Credit Impact &amp; GPA Leverage</h2>
+              <p class="panel-subtitle">
+                Net quality points &amp; cumulative GPA delta contributed by each course vs. your <span id="baselineRefSpan" class="mono">3.42</span> baseline
+              </p>
+            </div>
+            <div class="chart-legend mono">
+              <span class="legend-item"><span class="legend-dot" style="background: var(--status-success);"></span> Lifts GPA</span>
+              <span class="legend-item"><span class="legend-dot" style="background: var(--status-danger);"></span> Lowers GPA</span>
+              <span class="legend-item"><span class="legend-dot" style="background: var(--text-muted);"></span> P/F Neutral</span>
+            </div>
+          </div>
+
+          <div class="svg-wrapper">
+            <svg id="impactSvg" viewBox="0 0 640 220" role="img" aria-label="Diverging Credit Impact and GPA Leverage Chart"></svg>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- ======================================================================
+         6. CLEARLY MARKED PORTFOLIO SUBMISSION FOOTNOTE
+         ====================================================================== -->
+    <footer class="submission-footer">
+      <strong>Portfolio Submission Note:</strong> Default course names, credits, and baseline GPA figures are fictional sample data generated for public demonstration purposes.
+    </footer>
+
+  </div>
+
+  <script>
+    /* ==========================================================================
+       STANDARD 11-STEP COLLEGIATE GRADE SCALE (0.0 F to 4.0 A)
+       ========================================================================== */
+    const GRADE_STEPS = [
+      { letter: 'F',  points: 0.00 },
+      { letter: 'D',  points: 1.00 },
+      { letter: 'D+', points: 1.30 },
+      { letter: 'C-', points: 1.70 },
+      { letter: 'C',  points: 2.00 },
+      { letter: 'C+', points: 2.30 },
+      { letter: 'B-', points: 2.70 },
+      { letter: 'B',  points: 3.00 },
+      { letter: 'B+', points: 3.30 },
+      { letter: 'A-', points: 3.70 },
+      { letter: 'A',  points: 4.00 }
+    ];
+
+    /* ==========================================================================
+       DEFAULT FICTIONAL SAMPLE DATA
+       ========================================================================== */
+    const DEFAULT_STATE = {
+      theme: 'telemetry',
+      priorGpa: 3.42,
+      completedCredits: 45,
+      targetGpa: 3.50,
+      strictCap: true,
+      aceFinals: false,
+      showFifthCourse: false,
+      courses: [
+        {
+          id: 'c1',
+          name: 'PHYS 201 - General Physics I',
+          credits: 4,
+          gradeIdx: 9, // A- (3.70)
+          honors: true,
+          passFail: false
+        },
+        {
+          id: 'c2',
+          name: 'MATH 220 - College Algebra & Trig',
+          credits: 3,
+          gradeIdx: 8, // B+ (3.30)
+          honors: false,
+          passFail: false
+        },
+        {
+          id: 'c3',
+          name: 'CS 105 - Intro to Computer Science',
+          credits: 3,
+          gradeIdx: 10, // A (4.00)
+          honors: true,
+          passFail: false
+        },
+        {
+          id: 'c4',
+          name: 'HIST 110 - World Civilization Elective',
+          credits: 3,
+          gradeIdx: 7, // B (3.00)
+          honors: false,
+          passFail: false
+        },
+        {
+          id: 'c5',
+          name: 'STAT 210 - Applied Probability Lab',
+          credits: 3,
+          gradeIdx: 9, // A- (3.70)
+          honors: false,
+          passFail: false
+        }
+      ]
+    };
+
+    let state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+
+    /* ==========================================================================
+       DOM REFERENCES
+       ========================================================================== */
+    const dom = {
+      themeBtns: document.querySelectorAll('[data-set-theme]'),
+      tradeoffPresetBtn: document.getElementById('tradeoffPresetBtn'),
+      resetDataBtn: document.getElementById('resetDataBtn'),
+      heroPanel: document.getElementById('heroPanel'),
+      targetStatusBadge: document.getElementById('targetStatusBadge'),
+      projectedGpaValue: document.getElementById('projectedGpaValue'),
+      maxScaleDisplay: document.getElementById('maxScaleDisplay'),
+      netGpaChangeText: document.getElementById('netGpaChangeText'),
+      bufferGapText: document.getElementById('bufferGapText'),
+      kpiSemesterGpa: document.getElementById('kpiSemesterGpa'),
+      kpiSemesterSub: document.getElementById('kpiSemesterSub'),
+      kpiTotalCredits: document.getElementById('kpiTotalCredits'),
+      kpiCreditsSub: document.getElementById('kpiCreditsSub'),
+      kpiQualityPoints: document.getElementById('kpiQualityPoints'),
+      kpiPointsSub: document.getElementById('kpiPointsSub'),
+      kpiStandingTier: document.getElementById('kpiStandingTier'),
+      kpiStandingSub: document.getElementById('kpiStandingSub'),
+      priorGpaSlider: document.getElementById('priorGpaSlider'),
+      priorGpaReadout: document.getElementById('priorGpaReadout'),
+      completedCreditsSlider: document.getElementById('completedCreditsSlider'),
+      completedCreditsReadout: document.getElementById('completedCreditsReadout'),
+      targetGpaSlider: document.getElementById('targetGpaSlider'),
+      targetGpaReadout: document.getElementById('targetGpaReadout'),
+      strictCapToggle: document.getElementById('strictCapToggle'),
+      aceFinalsToggle: document.getElementById('aceFinalsToggle'),
+      toggleFifthCourseBtn: document.getElementById('toggleFifthCourseBtn'),
+      coursesGrid: document.getElementById('coursesGrid'),
+      trajectorySvg: document.getElementById('trajectorySvg'),
+      trajectoryDeltaBadge: document.getElementById('trajectoryDeltaBadge'),
+      impactSvg: document.getElementById('impactSvg'),
+      baselineRefSpan: document.getElementById('baselineRefSpan')
+    };
+
+    /* ==========================================================================
+       THEME SWITCHER LOGIC (CSS CUSTOM PROPERTIES)
+       ========================================================================== */
+    function applyTheme(themeKey) {
+      state.theme = themeKey;
+      document.documentElement.setAttribute('data-theme', themeKey);
+      dom.themeBtns.forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.setTheme === themeKey);
+      });
+    }
+
+    /* ==========================================================================
+       QUANTITATIVE GPA & LEVERAGE ENGINE
+       ========================================================================== */
+    function evaluateCourse(course, totalGradedCreditsForDelta) {
+      const step = GRADE_STEPS[course.gradeIdx];
+      let points = step.points;
+
+      // Apply What-If: Ace All Finals (+0.33 boost for passing grades)
+      if (state.aceFinals && points > 0) {
+        points = Math.min(4.00, points + 0.33);
+      }
+
+      // Pass/Fail Election: Excluded from GPA; grants earned credits if >= D (1.00)
+      if (course.passFail) {
+        const passed = points >= 1.00;
+        return {
+          letter: step.letter,
+          effectivePoints: null,
+          qualityPoints: 0,
+          gradedCredits: 0,
+          earnedCredits: passed ? course.credits : 0,
+          isPassFail: true,
+          passed,
+          netQualityPointsDelta: 0,
+          gpaDeltaContribution: 0
+        };
+      }
+
+      // Apply Honors/Lab (+0.25) boost if passing
+      if (course.honors && points >= 1.00) {
+        points += 0.25;
+      }
+
+      const scaleCap = state.strictCap ? 4.00 : 4.25;
+      const effectivePoints = Math.min(scaleCap, points);
+      const qualityPoints = effectivePoints * course.credits;
+      const earnedCredits = effectivePoints >= 1.00 ? course.credits : 0;
+
+      // Net quality points contributed relative to prior baseline GPA
+      const netQualityPointsDelta = (effectivePoints - state.priorGpa) * course.credits;
+      const gpaDeltaContribution = totalGradedCreditsForDelta > 0
+        ? (netQualityPointsDelta / totalGradedCreditsForDelta)
+        : 0;
+
+      return {
+        letter: step.letter,
+        effectivePoints,
+        qualityPoints,
+        gradedCredits: course.credits,
+        earnedCredits,
+        isPassFail: false,
+        passed: effectivePoints >= 1.00,
+        netQualityPointsDelta,
+        gpaDeltaContribution
+      };
+    }
+
+    function runSimulation() {
+      const activeCourses = state.showFifthCourse ? state.courses : state.courses.slice(0, 4);
+
+      // First pass to find total graded credits for exact per-course GPA delta attribution
+      let termGradedCredits = 0;
+      activeCourses.forEach(c => {
+        if (!c.passFail) termGradedCredits += c.credits;
+      });
+      const totalGradedCredits = state.completedCredits + termGradedCredits;
+
+      // Second pass for full metrics
+      let termEarnedCredits = 0;
+      let termQualityPoints = 0;
+
+      const evaluatedCourses = activeCourses.map(course => {
+        const result = evaluateCourse(course, totalGradedCredits);
+        termEarnedCredits += result.earnedCredits;
+        termQualityPoints += result.qualityPoints;
+        return { course, result };
+      });
+
+      const priorQualityPoints = state.priorGpa * state.completedCredits;
+      const totalEarnedCredits = state.completedCredits + termEarnedCredits;
+      const totalQualityPoints = priorQualityPoints + termQualityPoints;
+
+      const semesterGpa = termGradedCredits > 0 ? (termQualityPoints / termGradedCredits) : state.priorGpa;
+      const projectedGpa = totalGradedCredits > 0 ? (totalQualityPoints / totalGradedCredits) : 0.00;
+      const netGpaChange = projectedGpa - state.priorGpa;
+
+      // Target GPA buffer or shortfall in quality points
+      const requiredQualityPoints = state.targetGpa * totalGradedCredits;
+      const qualityPointsBuffer = totalQualityPoints - requiredQualityPoints;
+      const targetMet = projectedGpa >= state.targetGpa - 0.0001;
+
+      // Standing Tier
+      let standing = { title: 'Good Academic Standing', sub: '2.00 – 3.49 cumulative band' };
+      if (projectedGpa >= 3.90) {
+        standing = { title: 'Summa Cum Laude Track', sub: '3.90+ highest honors band' };
+      } else if (projectedGpa >= 3.70) {
+        standing = { title: 'Magna Cum Laude Track', sub: '3.70 – 3.89 honors band' };
+      } else if (projectedGpa >= 3.50) {
+        standing = { title: 'Cum Laude Honors Track', sub: '3.50 – 3.69 honors band' };
+      } else if (projectedGpa < 2.00) {
+        standing = { title: 'Academic Probation Risk', sub: 'Below 2.00 minimum standard' };
+      }
+
+      return {
+        evaluatedCourses,
+        termGradedCredits,
+        termEarnedCredits,
+        termQualityPoints,
+        totalGradedCredits,
+        totalEarnedCredits,
+        totalQualityPoints,
+        semesterGpa,
+        projectedGpa,
+        netGpaChange,
+        qualityPointsBuffer,
+        targetMet,
+        standing
+      };
+    }
+
+    /* ==========================================================================
+       RENDER DYNAMIC COURSEWORK CARDS
+       ========================================================================== */
+    function renderCourseCards() {
+      const activeCourses = state.showFifthCourse ? state.courses : state.courses.slice(0, 4);
+
+      dom.coursesGrid.innerHTML = activeCourses.map((course, idx) => {
+        const res = evaluateCourse(course, 1);
+        let pillClass = 'grade-pill mono';
+        let pillText = '';
+
+        if (res.isPassFail) {
+          pillClass += ' pf-mode';
+          pillText = res.passed ? `P (${res.letter}) &bull; Excl.` : `NP (${res.letter}) &bull; 0 cr`;
+        } else {
+          if (res.effectivePoints < 2.00) pillClass += ' low-grade';
+          pillText = `${res.letter} (${res.effectivePoints.toFixed(2)})`;
+        }
+
+        const creditOptions = [1, 2, 3, 4, 5].map(cr =>
+          `<option value="${cr}" ${course.credits === cr ? 'selected' : ''}>${cr} cr</option>`
+        ).join('');
+
+        return `
+          <article class="course-card">
+            <div>
+              <div class="course-header">
+                <div>
+                  <h3 class="course-name">${course.name}</h3>
+                  <div class="course-meta-row">
+                    <select class="credit-select" aria-label="Credits for ${course.name}" data-action="change-credits" data-idx="${idx}">
+                      ${creditOptions}
+                    </select>
+                    ${course.honors && !course.passFail ? '<span class="boost-chip mono">Honors +0.25</span>' : ''}
+                    ${course.passFail ? '<span class="panel-tag mono" style="font-size:0.65rem;padding:0.1rem 0.4rem;">Pass/Fail</span>' : ''}
+                  </div>
+                </div>
+                <div class="${pillClass}">${pillText}</div>
+              </div>
+
+              <!-- 11-Step Grade Slider -->
+              <div style="margin-top: 0.75rem;">
+                <input
+                  type="range"
+                  class="app-slider"
+                  min="0"
+                  max="${GRADE_STEPS.length - 1}"
+                  step="1"
+                  value="${course.gradeIdx}"
+                  aria-label="Grade slider for ${course.name}"
+                  data-action="slide-grade"
+                  data-idx="${idx}"
+                />
+                <div class="slider-ticks mono" style="margin-top: 0.25rem;">
+                  <span>F</span>
+                  <span>D+</span>
+                  <span>C</span>
+                  <span>B-</span>
+                  <span>B+</span>
+                  <span>A</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Per-Course Toggles -->
+            <div class="course-toggles">
+              <label class="mini-toggle-row">
+                <span>Honors / Lab (+0.25)</span>
+                <span class="switch sm">
+                  <input type="checkbox" data-action="toggle-honors" data-idx="${idx}" ${course.honors ? 'checked' : ''} ${course.passFail ? 'disabled' : ''} />
+                  <span class="switch-track"></span>
+                </span>
+              </label>
+
+              <label class="mini-toggle-row">
+                <span>Pass/Fail (Exclude from GPA)</span>
+                <span class="switch sm">
+                  <input type="checkbox" data-action="toggle-pf" data-idx="${idx}" ${course.passFail ? 'checked' : ''} />
+                  <span class="switch-track"></span>
+                </span>
+              </label>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    /* ==========================================================================
+       RENDER SVG 1: CUMULATIVE GPA TRAJECTORY & BENCHMARK BAR (2.00 - 4.00 SCALE)
+       ========================================================================== */
+    function renderTrajectorySvg(sim) {
+      const minScale = 2.00;
+      const maxScale = 4.00;
+      const leftX = 14;
+      const rightX = 446;
+      const trackWidth = rightX - leftX;
+
+      const toX = val => {
+        const clamped = Math.max(minScale, Math.min(maxScale, val));
+        return leftX + ((clamped - minScale) / (maxScale - minScale)) * trackWidth;
+      };
+
+      const priorX = toX(state.priorGpa);
+      const projX = toX(sim.projectedGpa);
+      const targetX = toX(state.targetGpa);
+
+      const projColor = sim.targetMet ? 'var(--status-success)' : 'var(--status-warning)';
+      const ticks = [2.00, 2.50, 3.00, 3.50, 4.00];
+
+      const gridLines = ticks.map(t => {
+        const x = toX(t);
+        return `
+          <line x1="${x}" y1="34" x2="${x}" y2="146" stroke="var(--border-subtle)" stroke-width="1" stroke-dasharray="3,3" />
+          <text x="${x}" y="164" fill="var(--text-muted)" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">${t.toFixed(2)}</text>
+        `;
+      }).join('');
+
+      dom.trajectorySvg.innerHTML = `
+        ${gridLines}
+
+        <!-- Prior Baseline GPA Bar -->
+        <text x="${leftX}" y="46" fill="var(--text-secondary)" font-size="11" font-weight="600">Prior Baseline GPA</text>
+        <rect x="${leftX}" y="52" width="${trackWidth}" height="14" rx="7" fill="var(--bg-surface-alt)" stroke="var(--border-subtle)" />
+        <rect x="${leftX}" y="52" width="${Math.max(6, priorX - leftX)}" height="14" rx="7" fill="var(--text-muted)" opacity="0.65" />
+        <text x="${Math.min(rightX - 4, Math.max(leftX + 34, priorX + 8))}" y="63" fill="var(--text-primary)" font-size="11" font-family="JetBrains Mono, monospace" font-weight="700">${state.priorGpa.toFixed(2)}</text>
+
+        <!-- Projected Cumulative GPA Bar -->
+        <text x="${leftX}" y="93" fill="var(--text-primary)" font-size="11" font-weight="700">Projected Cumulative GPA</text>
+        <rect x="${leftX}" y="99" width="${trackWidth}" height="18" rx="9" fill="var(--bg-surface-alt)" stroke="var(--border-subtle)" />
+        <rect x="${leftX}" y="99" width="${Math.max(8, projX - leftX)}" height="18" rx="9" fill="${projColor}" opacity="0.88" />
+        <circle cx="${projX}" cy="108" r="6" fill="${projColor}" stroke="var(--bg-surface)" stroke-width="2" />
+        <text x="${Math.min(rightX - 4, Math.max(leftX + 40, projX + 10))}" y="112" fill="${projColor}" font-size="12" font-family="JetBrains Mono, monospace" font-weight="800">${sim.projectedGpa.toFixed(2)}</text>
+
+        <!-- Target Goal Benchmark Marker -->
+        <line x1="${targetX}" y1="24" x2="${targetX}" y2="144" stroke="var(--accent-primary)" stroke-width="2" stroke-dasharray="4,3" />
+        <rect x="${Math.min(368, Math.max(10, targetX - 40))}" y="4" width="80" height="18" rx="6" fill="var(--accent-primary)" />
+        <text x="${Math.min(408, Math.max(50, targetX))}" y="16" fill="var(--bg-canvas)" font-size="10" font-family="JetBrains Mono, monospace" font-weight="800" text-anchor="middle">Goal ${state.targetGpa.toFixed(2)}</text>
+      `;
+    }
+
+    /* ==========================================================================
+       RENDER SVG 2: DIVERGING CREDIT IMPACT & GPA LEVERAGE CHART
+       ========================================================================== */
+    function renderImpactSvg(sim) {
+      const items = sim.evaluatedCourses;
+      const rowHeight = 40;
+      const topPad = 24;
+      const svgHeight = topPad + items.length * rowHeight + 16;
+      dom.impactSvg.setAttribute('viewBox', `0 0 640 ${svgHeight}`);
+
+      const chartLeft = 210;
+      const chartRight = 540;
+      const zeroX = (chartLeft + chartRight) / 2;
+      const halfSpan = (chartRight - chartLeft) / 2;
+
+      const maxAbsQp = Math.max(2.5, ...items.map(i => Math.abs(i.result.netQualityPointsDelta)));
+
+      const rows = items.map((item, idx) => {
+        const y = topPad + idx * rowHeight;
+        const { course, result } = item;
+        const label = course.name.length > 28 ? course.name.slice(0, 27) + '…' : course.name;
+
+        let barMarkup = '';
+        let readoutText = '';
+        let readoutColor = 'var(--text-secondary)';
+
+        if (result.isPassFail) {
+          barMarkup = `
+            <rect x="${zeroX - 38}" y="${y + 8}" width="76" height="16" rx="8" fill="var(--bg-surface)" stroke="var(--border-strong)" />
+            <text x="${zeroX}" y="${y + 19}" fill="var(--text-secondary)" font-size="9.5" font-family="JetBrains Mono, monospace" font-weight="700" text-anchor="middle">P/F NEUTRAL</text>
+          `;
+          readoutText = '0.00 qp (0.000)';
+        } else {
+          const qp = result.netQualityPointsDelta;
+          const deltaGpa = result.gpaDeltaContribution;
+          const barLen = (Math.abs(qp) / maxAbsQp) * (halfSpan - 8);
+          const sign = qp >= 0 ? '+' : '';
+
+          if (qp >= 0.005) {
+            barMarkup = `<rect x="${zeroX}" y="${y + 8}" width="${Math.max(3, barLen)}" height="16" rx="4" fill="var(--status-success)" opacity="0.88" />`;
+            readoutColor = 'var(--status-success)';
+          } else if (qp <= -0.005) {
+            barMarkup = `<rect x="${zeroX - Math.max(3, barLen)}" y="${y + 8}" width="${Math.max(3, barLen)}" height="16" rx="4" fill="var(--status-danger)" opacity="0.88" />`;
+            readoutColor = 'var(--status-danger)';
+          } else {
+            barMarkup = `<circle cx="${zeroX}" cy="${y + 16}" r="4" fill="var(--accent-primary)" />`;
+            readoutColor = 'var(--accent-primary)';
+          }
+
+          readoutText = `${sign}${qp.toFixed(2)} qp (${sign}${deltaGpa.toFixed(3)})`;
+        }
+
+        return `
+          <g>
+            <line x1="0" y1="${y + rowHeight - 3}" x2="640" y2="${y + rowHeight - 3}" stroke="var(--border-subtle)" stroke-opacity="0.6" />
+            <text x="2" y="${y + 15}" fill="var(--text-primary)" font-size="11.5" font-weight="600">${label}</text>
+            <text x="2" y="${y + 28}" fill="var(--text-muted)" font-size="10" font-family="JetBrains Mono, monospace">
+              ${course.credits} cr &bull; ${result.isPassFail ? 'Pass/Fail' : `${result.letter} (${result.effectivePoints.toFixed(2)})`}
+            </text>
+
+            <rect x="${chartLeft}" y="${y + 8}" width="${chartRight - chartLeft}" height="16" rx="4" fill="var(--bg-surface-alt)" />
+            ${barMarkup}
+
+            <text x="638" y="${y + 20}" fill="${readoutColor}" font-size="10.5" font-family="JetBrains Mono, monospace" font-weight="700" text-anchor="end">${readoutText}</text>
+          </g>
+        `;
+      }).join('');
+
+      dom.impactSvg.innerHTML = `
+        <text x="${chartLeft}" y="13" fill="var(--text-muted)" font-size="10" font-family="JetBrains Mono, monospace">-${maxAbsQp.toFixed(1)} qp</text>
+        <text x="${zeroX}" y="13" fill="var(--text-secondary)" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">Baseline (${state.priorGpa.toFixed(2)})</text>
+        <text x="${chartRight}" y="13" fill="var(--text-muted)" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="end">+${maxAbsQp.toFixed(1)} qp</text>
+
+        ${rows}
+
+        <line x1="${zeroX}" y1="18" x2="${zeroX}" y2="${svgHeight - 10}" stroke="var(--text-muted)" stroke-width="1.5" stroke-dasharray="3,3" />
+      `;
+    }
+
+    /* ==========================================================================
+       MASTER UI UPDATE LOOP
+       ========================================================================== */
+    function updateAll() {
+      const sim = runSimulation();
+
+      // Update Control Readouts
+      dom.priorGpaReadout.textContent = state.priorGpa.toFixed(2);
+      dom.completedCreditsReadout.textContent = `${state.completedCredits} cr`;
+      dom.targetGpaReadout.textContent = state.targetGpa.toFixed(2);
+      dom.maxScaleDisplay.textContent = state.strictCap ? '4.00' : '4.25';
+      dom.baselineRefSpan.textContent = state.priorGpa.toFixed(2);
+
+      // Update + Add 5th Course / Remove Button
+      if (state.showFifthCourse) {
+        dom.toggleFifthCourseBtn.textContent = 'Remove 5th Course';
+        dom.toggleFifthCourseBtn.classList.add('remove-mode');
+      } else {
+        dom.toggleFifthCourseBtn.textContent = '+ Add 5th Course';
+        dom.toggleFifthCourseBtn.classList.remove('remove-mode');
+      }
+
+      // Update Hero Telemetry Panel
+      dom.projectedGpaValue.textContent = sim.projectedGpa.toFixed(2);
+      dom.heroPanel.classList.remove('state-success', 'state-warn');
+      dom.heroPanel.classList.add(sim.targetMet ? 'state-success' : 'state-warn');
+
+      if (sim.targetMet) {
+        dom.targetStatusBadge.className = 'status-badge eligible';
+        dom.targetStatusBadge.innerHTML = `<span class="status-dot"></span> Dean's List Eligible &ge; ${state.targetGpa.toFixed(2)}`;
+      } else {
+        dom.targetStatusBadge.className = 'status-badge below';
+        dom.targetStatusBadge.innerHTML = `<span class="status-dot"></span> Below Target`;
+      }
+
+      const deltaSign = sim.netGpaChange >= 0 ? '+' : '';
+      dom.netGpaChangeText.textContent = `${deltaSign}${sim.netGpaChange.toFixed(2)} GPA net change`;
+      dom.netGpaChangeText.className = `delta-pill mono ${sim.netGpaChange >= 0 ? 'delta-positive' : 'delta-negative'}`;
+      dom.trajectoryDeltaBadge.textContent = `${deltaSign}${sim.netGpaChange.toFixed(2)}`;
+
+      if (sim.targetMet) {
+        dom.bufferGapText.innerHTML = `Target Goal <strong class="mono">${state.targetGpa.toFixed(2)}</strong>: <span class="buffer-highlight-ok mono">+${Math.abs(sim.qualityPointsBuffer).toFixed(2)} quality pts buffer</span>`;
+      } else {
+        dom.bufferGapText.innerHTML = `Target Goal <strong class="mono">${state.targetGpa.toFixed(2)}</strong>: <span class="buffer-highlight-gap mono">${Math.abs(sim.qualityPointsBuffer).toFixed(2)} quality pts needed</span>`;
+      }
+
+      // Update 4 Live KPI Cards
+      dom.kpiSemesterGpa.textContent = sim.semesterGpa.toFixed(2);
+      dom.kpiSemesterSub.textContent = `${sim.termGradedCredits} graded credits`;
+
+      dom.kpiTotalCredits.textContent = sim.totalEarnedCredits;
+      dom.kpiCreditsSub.textContent = `${state.completedCredits} prior + ${sim.termEarnedCredits} current`;
+
+      dom.kpiQualityPoints.textContent = sim.totalQualityPoints.toFixed(2);
+      dom.kpiPointsSub.textContent = `+${sim.termQualityPoints.toFixed(2)} earned this term`;
+
+      dom.kpiStandingTier.textContent = sim.standing.title;
+      dom.kpiStandingSub.textContent = sim.standing.sub;
+
+      // Render Course Cards & SVG Visualizations
+      renderCourseCards();
+      renderTrajectorySvg(sim);
+      renderImpactSvg(sim);
+    }
+
+    /* ==========================================================================
+       EVENT LISTENERS
+       ========================================================================== */
+    dom.themeBtns.forEach(btn => {
+      btn.addEventListener('click', () => applyTheme(btn.dataset.setTheme));
+    });
+
+    dom.priorGpaSlider.addEventListener('input', e => {
+      state.priorGpa = parseFloat(e.target.value);
+      updateAll();
+    });
+
+    dom.completedCreditsSlider.addEventListener('input', e => {
+      state.completedCredits = parseInt(e.target.value, 10);
+      updateAll();
+    });
+
+    dom.targetGpaSlider.addEventListener('input', e => {
+      state.targetGpa = parseFloat(e.target.value);
+      updateAll();
+    });
+
+    dom.strictCapToggle.addEventListener('change', e => {
+      state.strictCap = e.target.checked;
+      updateAll();
+    });
+
+    dom.aceFinalsToggle.addEventListener('change', e => {
+      state.aceFinals = e.target.checked;
+      updateAll();
+    });
+
+    dom.toggleFifthCourseBtn.addEventListener('click', () => {
+      state.showFifthCourse = !state.showFifthCourse;
+      updateAll();
+    });
+
+    // Delegated Course Card Events
+    dom.coursesGrid.addEventListener('input', e => {
+      if (e.target.dataset.action === 'slide-grade') {
+        const idx = parseInt(e.target.dataset.idx, 10);
+        state.courses[idx].gradeIdx = parseInt(e.target.value, 10);
+        updateAll();
+      }
+    });
+
+    dom.coursesGrid.addEventListener('change', e => {
+      const idx = parseInt(e.target.dataset.idx, 10);
+      if (e.target.dataset.action === 'change-credits') {
+        state.courses[idx].credits = parseInt(e.target.value, 10);
+        updateAll();
+      } else if (e.target.dataset.action === 'toggle-honors') {
+        state.courses[idx].honors = e.target.checked;
+        updateAll();
+      } else if (e.target.dataset.action === 'toggle-pf') {
+        state.courses[idx].passFail = e.target.checked;
+        updateAll();
+      }
+    });
+
+    // Preset: Test Tradeoff Scenario (Elective Pass/Fail + Honors Physics Boost)
+    dom.tradeoffPresetBtn.addEventListener('click', () => {
+      state.priorGpa = 3.42;
+      state.completedCredits = 45;
+      state.targetGpa = 3.55;
+      state.strictCap = true;
+      state.aceFinals = false;
+      state.showFifthCourse = false;
+
+      // Boost PHYS 201 to A (4.00) with Honors, set HIST 110 (C+ 2.30) to Pass/Fail to protect GPA
+      state.courses[0].gradeIdx = 10;
+      state.courses[0].honors = true;
+      state.courses[0].passFail = false;
+
+      state.courses[1].gradeIdx = 9; // A-
+      state.courses[2].gradeIdx = 10; // A
+      state.courses[3].gradeIdx = 5; // C+
+      state.courses[3].passFail = true;
+
+      syncControlsToState();
+      updateAll();
+    });
+
+    // Reset Sample Data
+    dom.resetDataBtn.addEventListener('click', () => {
+      const currentTheme = state.theme;
+      state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+      state.theme = currentTheme;
+      syncControlsToState();
+      updateAll();
+    });
+
+    function syncControlsToState() {
+      dom.priorGpaSlider.value = state.priorGpa;
+      dom.completedCreditsSlider.value = state.completedCredits;
+      dom.targetGpaSlider.value = state.targetGpa;
+      dom.strictCapToggle.checked = state.strictCap;
+      dom.aceFinalsToggle.checked = state.aceFinals;
+    }
+
+    // Boot Application
+    window.addEventListener('DOMContentLoaded', () => {
+      applyTheme(state.theme);
+      syncControlsToState();
+      updateAll();
+    });
+  </script>
+</body>
+</html>
